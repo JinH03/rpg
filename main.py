@@ -15,6 +15,15 @@ monster_hp = [30, 60, 200]
 monster_attack = [5, 10, 50]
 monster_index = 0
 action = ""
+def show_monster_info():
+    print("몬스터 :", monster_name[monster_index])
+    print("몬스터 체력 :", monster_hp[monster_index])
+    print("몬스터 공격력 :", monster_attack[monster_index])
+def show_character_info():
+    print("레벨 : ", level)
+    print("체력 : ", hp)
+    print("공격력 : ", attack)
+    print("경험치 : ", level_up)
         
 while True:
     if hp <= 0:
@@ -39,16 +48,13 @@ while True:
             continue
     if monster_hp[monster_index] <= 0:
         monster_hp = [30, 60, 200]
-
-    print("몬스터 :", monster_name[monster_index])
-    print("몬스터 체력 :", monster_hp[monster_index])
-    print("몬스터 공격력 :", monster_attack[monster_index])
-
+    show_monster_info()
 
     if hp >= 1 and monster_hp[monster_index] >= 1:
         print("----------------------------------")
         print("1. 공격 2. 도망")
         action = input("행동 선택 : ")
+        print("----------------------------------")
         if action == "1" or action == "공격":
             monster_hp[monster_index] -= attack
             print("몬스터에게 ", attack, "의 피해를 입혔습니다.")
@@ -68,8 +74,7 @@ while True:
                     level_up = 0
                     print("레벨업! 현재 레벨 : ", level)
                 print("레벨업 경험치 10을 획득하였습니다. 현재 레벨업 경험치 : ", level_up)
-                print("현재 체력 : ", hp)
-                print("현재 공격력 : ", attack)
+                show_character_info()
         elif action == "2" or action == "도망":
             print("도망쳤습니다.")
             difficulty = 5

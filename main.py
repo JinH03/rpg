@@ -13,16 +13,18 @@ print("캐릭터 이름 : ", name)
 print("레벨 : ", level)
 print("체력 : ", hp)
 print("공격력 : ", attack)
-monster_name = ["슬라임", "고블린", "드래곤"]
-monster_hp = [30, 60, 200]
-monster_attack = [5, 10, 50]
+monsters =[
+    {name: "슬라임", hp: 30, attack: 5},
+    {name: "고블린", hp: 60, attack: 10},
+    {name: "드래곤", hp: 200, attack: 20}
+]
 monster_index = 0
 action = ""
 
-def show_monster_info(name, hp, attack):
-    print("몬스터 :", name)
-    print("몬스터 체력 :", hp)
-    print("몬스터 공격력 :", attack)
+def show_monster_info(monster):
+    print("몬스터 :", monster["name"])
+    print("몬스터 체력 :", monster["hp"])
+    print("몬스터 공격력 :", monster["attack"])
 def show_character_info(level,hp,hp_max,attack,level_up):
     print("레벨 : ", level)
     print("체력 : ", hp , "/", hp_max)
@@ -42,7 +44,7 @@ while True:
     if hp <= 0:
         print("캐릭터가 사망하였습니다. 게임을 종료합니다.")
         break
-    if difficulty == 5 or monster_hp[monster_index] <= 0:
+    if difficulty == 5 or monsters[monster_index]["hp"] <= 0:
         print("----------------------------------")
         print("난이도를 선택하세요.")
         print("1. 쉬움 2. 보통 3. 어려움 0. 종료")
@@ -59,23 +61,23 @@ while True:
         else:
             print("잘못된 입력입니다. 다시 선택해주세요.")
             continue
-    if monster_hp[monster_index] <= 0:
-        monster_hp = [30, 60, 200]
-    show_monster_info(monster_name[monster_index], monster_hp[monster_index], monster_attack[monster_index])
+    if monsters[monster_index]["hp"] <= 0:
+        monsters[monster_index]["hp"] = [30, 60, 200][monster_index]
+    show_monster_info(monsters[monster_index])
 
-    if hp >= 1 and monster_hp[monster_index] >= 1:
+    if hp >= 1 and monsters[monster_index]["hp"] >= 1:
         print("----------------------------------")
         action = get_action()
         print("----------------------------------")
         if action == "공격":
             player_damage = random.randint(attack - 3, attack + 3)
-            monster_damage = random.randint(monster_attack[monster_index] - 2,monster_attack[monster_index] + 2)
+            monster_damage = random.randint(monsters[monster_index]["attack"] - 2, monsters[monster_index]["attack"] + 2)
             hp = max(0, hp - monster_damage)
-            monster_hp[monster_index] = max(0, monster_hp[monster_index] - player_damage)
+            monsters[monster_index]["hp"] = max(0, monsters[monster_index]["hp"] - player_damage)
             print("몬스터에게 ", player_damage, "의 피해를 입혔습니다.")
             print("몬스터에게 ", monster_damage, "의 피해를 입었습니다.")
             print("현재 체력 : ", hp)
-            if monster_hp[monster_index] <= 0:
+            if monsters[monster_index]["hp"] <= 0:
                 print("몬스터를 처치하였습니다.")
                 hp = min(hp_max, hp + 40)
                 print("----------------------------------")

@@ -1,4 +1,8 @@
 import random
+import json
+
+
+
 
 name = input("캐릭터 이름을 정하시오 :")
 
@@ -8,28 +12,42 @@ hp_max= 100
 hp = hp_max
 attack = 10
 difficulty = 5
+user_gold = 0
 print("=======캐릭터 정보=======")
 print("캐릭터 이름 : ", name)
 print("레벨 : ", level)
 print("체력 : ", hp)
 print("공격력 : ", attack)
 monsters =[
-    {"name": "슬라임", "hp": 30, "max_hp": 30, "attack": 5},
-    {"name": "고블린", "hp": 60, "max_hp": 60, "attack": 10},
-    {"name": "드래곤", "hp": 200, "max_hp": 200, "attack": 20}
+    {"name": "슬라임", "hp": 30, "max_hp": 30, "attack": 5 , "exp": 10, "gold": 30},
+    {"name": "고블린", "hp": 60, "max_hp": 60, "attack": 10, "exp": 20, "gold": 50},
+    {"name": "드래곤", "hp": 200, "max_hp": 200, "attack": 20, "exp": 100, "gold": 200}
 ]
 monster_index = 0
 action = ""
-
+def save_game(name, level, level_up,hp, hp_max, attack, gold):
+    game_data = {
+        "name": name,
+        "level": level,
+        "level_up": level_up,
+        "hp": hp,
+        "hp_max": hp_max,
+        "attack": attack,
+        "gold": gold
+    }
+    with open("game_save.json", "w", encoding="utf-8") as save_file:
+        json.dump(game_data, save_file, ensure_ascii=False, indent=2)
+    print("게임이 저장되었습니다.")
 def show_monster_info(monster):
     print("몬스터 :", monster["name"])
     print("몬스터 체력 :", monster["hp"], "/", monster["max_hp"])
     print("몬스터 공격력 :", monster["attack"])
-def show_character_info(level,hp,hp_max,attack,level_up):
+def show_character_info(level,hp,hp_max,attack,level_up,user_gold):
     print("레벨 : ", level)
     print("체력 : ", hp , "/", hp_max)
     print("공격력 : ", attack)
     print("경험치 : ", level_up)
+    print("골드 : ", user_gold)
 def get_action():
     while True:
         action = input("행동을 선택하세요. (1. 공격 2. 도망) : ")
@@ -43,7 +61,7 @@ def select_monster():
     while True:
         print("----------------------------------")
         print("난이도를 선택하세요.")
-        print("1. 쉬움 2. 보통 3. 어려움 0. 종료")
+        print("1. 쉬움 2. 보통 3. 어려움 0. 저장 및 종료" )
 
         choice = input("난이도 선택 : ")
 
@@ -53,8 +71,8 @@ def select_monster():
             return 1
         elif choice == "3" or choice == "어려움":
             return 2
-        elif choice == "0" or choice == "종료":
-            return None
+        elif choice == "0" or choice == "종료" or choice == "저장":
+            return "save"
         else:
             print("잘못된 입력입니다. 다시 선택해주세요.")
 while True:
@@ -63,11 +81,10 @@ while True:
         break
     if difficulty == 5 or monsters[monster_index]["hp"] <= 0:
         monster_index = select_monster()
-
-        if monster_index is None:
-            print("게임을 종료합니다.")
+        if monster_index == "save":
+            save_game(name, level, level_up, hp, hp_max, attack, user_gold)
+            print("게임을 종료합니다")
             break
-
         difficulty = 0
     if monsters[monster_index]["hp"] <= 0:
         monsters[monster_index]["hp"] = monsters[monster_index]["max_hp"]
@@ -90,16 +107,18 @@ while True:
                 hp = min(hp_max, hp + 40)
                 print("----------------------------------")
                 print("체력이 40 회복되었습니다. 현재 체력 : ", hp)
-                level_up += 10
+                level_up += monsters[monster_index]["exp"]
+                user_gold += monsters[monster_index]["gold"]
+                print("골드 ", monsters[monster_index]["gold"], "을 획득하였습니다. 현재 골드 : ", user_gold)
                 if level_up >= level:
                     level += 1
                     hp_max += 10
                     attack += 5
                     level_up = 0
                     print("레벨업! 현재 레벨 : ", level)
-                print("레벨업 경험치 10을 획득하였습니다. 현재 레벨업 경험치 : ", level_up)
+                print("레벨업 경험치", monsters[monster_index]["exp"], "을 획득하였습니다. 현재 레벨업 경험치 : ", level_up)
                 print("----------------------------------")
-                show_character_info(level, hp, hp_max, attack, level_up)
+                show_character_info(level, hp, hp_max, attack, level_up, user_gold)
         elif action == "도망":
             print("도망쳤습니다.")
             difficulty = 5

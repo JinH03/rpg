@@ -1,4 +1,4 @@
-#python Text Rpg
+python Text Rpg
 파이썬을 이용해 만든 텍스트 rpg 게임
 
 ## 기능

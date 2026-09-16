@@ -14,16 +14,16 @@ print("레벨 : ", level)
 print("체력 : ", hp)
 print("공격력 : ", attack)
 monsters =[
-    {name: "슬라임", hp: 30, attack: 5},
-    {name: "고블린", hp: 60, attack: 10},
-    {name: "드래곤", hp: 200, attack: 20}
+    {"name": "슬라임", "hp": 30, "max_hp": 30, "attack": 5},
+    {"name": "고블린", "hp": 60, "max_hp": 60, "attack": 10},
+    {"name": "드래곤", "hp": 200, "max_hp": 200, "attack": 20}
 ]
 monster_index = 0
 action = ""
 
 def show_monster_info(monster):
     print("몬스터 :", monster["name"])
-    print("몬스터 체력 :", monster["hp"])
+    print("몬스터 체력 :", monster["hp"], "/", monster["max_hp"])
     print("몬스터 공격력 :", monster["attack"])
 def show_character_info(level,hp,hp_max,attack,level_up):
     print("레벨 : ", level)
@@ -39,30 +39,38 @@ def get_action():
             return "도망"
         else:
             print("잘못된 입력입니다. 다시 선택해주세요.")
+def select_monster():
+    while True:
+        print("----------------------------------")
+        print("난이도를 선택하세요.")
+        print("1. 쉬움 2. 보통 3. 어려움 0. 종료")
 
+        choice = input("난이도 선택 : ")
+
+        if choice == "1" or choice == "쉬움":
+            return 0
+        elif choice == "2" or choice == "보통":
+            return 1
+        elif choice == "3" or choice == "어려움":
+            return 2
+        elif choice == "0" or choice == "종료":
+            return None
+        else:
+            print("잘못된 입력입니다. 다시 선택해주세요.")
 while True:
     if hp <= 0:
         print("캐릭터가 사망하였습니다. 게임을 종료합니다.")
         break
     if difficulty == 5 or monsters[monster_index]["hp"] <= 0:
-        print("----------------------------------")
-        print("난이도를 선택하세요.")
-        print("1. 쉬움 2. 보통 3. 어려움 0. 종료")
-        difficulty = input("난이도 선택 : ")
-        if difficulty == "1" or difficulty == "쉬움":
-            monster_index = 0
-        elif difficulty == "2" or difficulty == "보통":
-            monster_index = 1
-        elif difficulty == "3" or difficulty == "어려움":
-            monster_index = 2
-        elif difficulty == "0" or difficulty == "종료":
+        monster_index = select_monster()
+
+        if monster_index is None:
             print("게임을 종료합니다.")
             break
-        else:
-            print("잘못된 입력입니다. 다시 선택해주세요.")
-            continue
+
+        difficulty = 0
     if monsters[monster_index]["hp"] <= 0:
-        monsters[monster_index]["hp"] = [30, 60, 200][monster_index]
+        monsters[monster_index]["hp"] = monsters[monster_index]["max_hp"]
     show_monster_info(monsters[monster_index])
 
     if hp >= 1 and monsters[monster_index]["hp"] >= 1:

@@ -1,10 +1,8 @@
 import random
 import json
+import os
 
 
-
-
-name = input("캐릭터 이름을 정하시오 :")
 
 level = 10
 level_up = 0
@@ -13,11 +11,6 @@ hp = hp_max
 attack = 10
 difficulty = 5
 user_gold = 0
-print("=======캐릭터 정보=======")
-print("캐릭터 이름 : ", name)
-print("레벨 : ", level)
-print("체력 : ", hp)
-print("공격력 : ", attack)
 monsters =[
     {"name": "슬라임", "hp": 30, "max_hp": 30, "attack": 5 , "exp": 10, "gold": 30},
     {"name": "고블린", "hp": 60, "max_hp": 60, "attack": 10, "exp": 20, "gold": 50},
@@ -38,6 +31,13 @@ def save_game(name, level, level_up,hp, hp_max, attack, gold):
     with open("game_save.json", "w", encoding="utf-8") as save_file:
         json.dump(game_data, save_file, ensure_ascii=False, indent=2)
     print("게임이 저장되었습니다.")
+def load_game():
+    if os.path.exists("game_save.json"):
+        with open("game_save.json", "r", encoding="utf-8") as save_file:
+            game_data = json.load(save_file)
+        return game_data
+    return None
+
 def show_monster_info(monster):
     print("몬스터 :", monster["name"])
     print("몬스터 체력 :", monster["hp"], "/", monster["max_hp"])
@@ -75,7 +75,45 @@ def select_monster():
             return "save"
         else:
             print("잘못된 입력입니다. 다시 선택해주세요.")
+def select_game_mode():
+    while True:
+        print("게임 모드를 선택하세요.")
+        print("1. 새 게임 2. 불러오기")
+        choice = input("선택 : ")
+        if choice == "1" or choice == "새 게임":
+            return "new"
+        elif choice == "2" or choice == "불러오기":
+            return "load"
+        else:
+            print("잘못된 입력입니다. 다시 선택해주세요.")
+
+game_mode = select_game_mode()
+if game_mode == "new":
+    print("새 게임을 시작합니다.")
+    name = input("캐릭터 이름을 정하시오 :")
+elif game_mode == "load":
+    loaded_data = load_game()
+    if loaded_data:
+        name = loaded_data["name"]
+        level = loaded_data["level"]
+        level_up = loaded_data["level_up"]
+        hp = loaded_data["hp"]
+        hp_max = loaded_data["hp_max"]
+        attack = loaded_data["attack"]
+        user_gold = loaded_data["gold"]
+        print("게임을 불러왔습니다.")
+    else:
+        print("저장된 게임이 없습니다. 새 게임을 시작합니다.")
+        name = input("캐릭터 이름을 정하시오 :")
+        
+print("=======캐릭터 정보=======")
+print("캐릭터 이름 : ", name)
+print("레벨 : ", level)
+print("체력 : ", hp)
+print("공격력 : ", attack)
+
 while True:
+    
     if hp <= 0:
         print("캐릭터가 사망하였습니다. 게임을 종료합니다.")
         break

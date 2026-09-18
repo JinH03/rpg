@@ -231,13 +231,17 @@ while True:
         elif action == "포션 사용":
             print("포션을 사용합니다.")
             potion_using = 0
-            inventory_choice = input("사용할 포션을 선택하세요. (1. 체력 회복 물약 2. 공격력 강화 물약) : ")
+            print("보유 포션 : 체력회복 물약 = ", inventory["체력 회복 물약"],"/ 공격력 강화 물약 = ",inventory["공격력 강화 물약"])
+            inventory_choice = input("사용할 포션을 선택하세요. (1. 체력 회복 물약 2. 공격력 강화 물약 3. 사용 취소) : ")
             if inventory_choice == "1" or inventory_choice == "체력 회복 물약":
                 potion_using = use_potion(inventory, "체력 회복 물약")
             elif inventory_choice == "2" or inventory_choice == "공격력 강화 물약":
-                potion_using = use_potion(inventory, "공격력 강화 물약") 
+                potion_using = use_potion(inventory, "공격력 강화 물약")
+            elif inventory_choice == "3" or inventory_choice == "사용 취소":
+                break
             else:
-                print("잘못된 입력입니다. 포션 사용을 취소합니다.")
+                print("잘못된 입력입니다.")
+                continue
 
             if potion_using > 0:
                 if inventory_choice == "1" or inventory_choice == "체력 회복 물약":
@@ -253,9 +257,15 @@ while True:
             print("몬스터에게", monster_damage, "의 피해를 입었습니다.")
             
         elif action == "도망":
-            print("도망쳤습니다.")
-            difficulty = 5
-            continue
+            if random.random() < 0.15:
+                print("도망에 실패하였습니다.")
+                monster_damage = random.randint(monsters[monster_index]["attack"] - 2,monsters[monster_index]["attack"] + 2)
+                hp = max(0, hp - monster_damage)
+                print("몬스터에게", monster_damage, "의 피해를 입었습니다.")
+            else:
+                print("도망에 성공하였습니다.")
+                difficulty = 5
+                continue
         else:
             print("잘못된 입력입니다. 다시 선택해주세요.")
 
